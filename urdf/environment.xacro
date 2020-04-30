@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<robot name="environment" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="PI" value="3.1415926535897931"/>
+  <xacro:property name="mass" value="1" /> <!-- arbitrary value for mass -->
+  <xacro:property name="cyl_r" value="0.0127" />
+  <xacro:property name="cyl_h" value="0.73336" /> 
+  <xacro:property name="nose_r" value="0.01664" /> 
+  <xacro:property name="nose_h" value="0.25" /> 
+
+  <link name="world"/>
+
+  <joint name="joint0" type="fixed">
+    <origin xyz="-0.65 0.0254 0" rpy="0 0 0"/>
+    <parent link="world"/>
+    <child link="body"/>
+  </joint>
+
+  <link name="body">
+    <collision>
+      <origin xyz="0 0 ${cyl_h/2}" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${cyl_r}" length="${cyl_h}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 ${cyl_h/2}" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${cyl_r}" length="${cyl_h}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 ${cyl_h/2}" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <inertia
+	  ixx="${(3*cyl_r*cyl_r + cyl_h*cyl_h)*mass/12.0}" ixy="0.0" ixz="0.0"
+	  iyy="${(3*cyl_r*cyl_r + cyl_h*cyl_h)*mass/12.0}" iyz="0.0"
+	  izz="${cyl_r*cyl_r*mass/2.0}"/>
+    </inertial>
+  </link>
+
+  <joint name="joint1" type="fixed">
+    <parent link="body"/>
+    <child link="nose"/>
+    <origin xyz="0 0 ${cyl_h + nose_r}" rpy="0 ${-PI/2} 0"/>
+  </joint>
+
+  <link name="nose">
+    <collision>
+      <geometry>
+        <mesh filename="model://hollow_tube/meshes/model.dae" scale="0.004 0.004 0.02"/>
+        <!-- original outer diameter is 8.32 m -->
+        <!-- original inner diameter is more than 3 m -->
+      </geometry>
+    </collision>
+
+    <visual>
+      <geometry>
+        <mesh filename="model://hollow_tube/meshes/model.dae" scale="0.004 0.004 0.02"/>
+        <!-- original outer diameter is 8.32 m -->
+        <!-- original inner diameter is more than 3 m -->
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${mass}"/>
+      <inertia
+	  ixx="${(3*nose_r*nose_r + nose_h*nose_h)*mass/12.0}" ixy="0.0" ixz="0.0"
+	  iyy="${(3*nose_r*nose_r + nose_h*nose_h)*mass/12.0}" iyz="0.0"
+	  izz="${nose_r*nose_r*mass/2.0}"/>
+    </inertial>
+  </link>
+
+  <joint name="joint2" type="fixed">
+    <parent link="body"/>
+    <child link="test_tube"/>
+    <origin xyz="0.15 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="test_tube">
+    <collision>
+      <geometry>
+        <mesh filename="model://hollow_tube/meshes/model.dae" scale="0.004 0.004 0.02"/>
+        <!-- original outer diameter is 8.32 m -->
+        <!-- original inner diameter is more than 3 m -->
+      </geometry>
+    </collision>
+
+    <visual>
+      <geometry>
+        <mesh filename="model://hollow_tube/meshes/model.dae" scale="0.004 0.004 0.02"/>
+        <!-- original outer diameter is 8.32 m -->
+        <!-- original inner diameter is more than 3 m -->
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${mass}"/>
+      <inertia
+	  ixx="${(3*nose_r*nose_r + nose_h*nose_h)*mass/12.0}" ixy="0.0" ixz="0.0"
+	  iyy="${(3*nose_r*nose_r + nose_h*nose_h)*mass/12.0}" iyz="0.0"
+	  izz="${nose_r*nose_r*mass/2.0}"/>
+    </inertial>
+  </link>
+</robot>

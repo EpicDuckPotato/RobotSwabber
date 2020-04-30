@@ -1,0 +1,222 @@
+<?xml version="1.0"?>
+<!-- Revolute-Revolute-Revolute Manipulator -->
+<robot name="rrrbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Constants for robot dimensions -->
+  <xacro:property name="PI" value="3.1415926535897931"/>
+  <xacro:property name="mass" value="1" /> <!-- arbitrary value for mass -->
+  <xacro:property name="cyl_r" value="0.0127" /> <!-- link radii: 0.5 inches -->
+  <xacro:property name="h0" value="0.4572" /> <!-- link0 length: 1.5 ft -->
+  <xacro:property name="h1" value="0.3048" /> <!-- link1 length: 1 ft -->
+  <xacro:property name="h2" value="0.3048" /> <!-- link2 length: 1 ft -->
+  <xacro:property name="h3" value="0.3048" /> <!-- link3 length: 1 ft -->
+  <xacro:property name="swab_r" value="0.003175" /> <!-- swab radius: 1/8 inch -->
+  <xacro:property name="swab_h" value="0.1524" /> <!-- swab length: 0.5 ft -->
+  <xacro:property name="axle_offset" value="0.0125" /> <!-- Space btw top of beam and the each joint -->
+
+  <xacro:include filename="./rrr.gazebo"/>
+
+  <link name="world"/>
+
+  <joint name="joint0" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="world"/>
+    <child link="link0"/>
+  </joint>
+
+  <link name="link0">
+    <collision>
+      <origin xyz="0 0 ${h0/2}" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${cyl_r}" length="${h0}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 ${h0/2}" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${cyl_r}" length="${h0}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 ${h0/2}" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <inertia
+	  ixx="${(3*cyl_r*cyl_r + h0*h0)*mass/12.0}" ixy="0.0" ixz="0.0"
+	  iyy="${(3*cyl_r*cyl_r + h0*h0)*mass/12.0}" iyz="0.0"
+	  izz="${cyl_r*cyl_r*mass/2.0}"/>
+    </inertial>
+  </link>
+
+  <joint name="joint1" type="continuous">
+    <parent link="link0"/>
+    <child link="link1"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="0 ${2*cyl_r} ${h0 - axle_offset}" rpy="0 0 0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+
+  <transmission name="joint1_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="joint1_motor">
+      <mechanicalReduction>300</mechanicalReduction>
+    </actuator>
+    <joint name="joint1">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+  <link name="link1">
+    <collision>
+      <origin xyz="0 0 ${h1/2 - axle_offset}" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${cyl_r}" length="${h1}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 ${h1/2 - axle_offset}" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${cyl_r}" length="${h1}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 ${h1/2 - axle_offset}" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <inertia
+	  ixx="${(3*cyl_r*cyl_r + h1*h1)*mass/12.0}" ixy="0.0" ixz="0.0"
+	  iyy="${(3*cyl_r*cyl_r + h1*h1)*mass/12.0}" iyz="0.0"
+	  izz="${cyl_r*cyl_r*mass/2.0}"/>
+    </inertial>
+  </link>
+
+  <joint name="joint2" type="continuous">
+    <parent link="link1"/>
+    <child link="link2"/>
+    <origin xyz="0 ${-2*cyl_r} ${h1 - 2*axle_offset}" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+
+  <transmission name="joint2_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="joint2_motor">
+      <mechanicalReduction>300</mechanicalReduction>
+    </actuator>
+    <joint name="joint2">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+  <link name="link2">
+    <collision>
+      <origin xyz="0 0 ${h2/2 - axle_offset}" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${cyl_r}" length="${h2}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 ${h2/2 - axle_offset}" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${cyl_r}" length="${h2}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 ${h2/2 - axle_offset}" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <inertia
+	  ixx="${(3*cyl_r*cyl_r + h2*h2)*mass/12.0}" ixy="0.0" ixz="0.0"
+	  iyy="${(3*cyl_r*cyl_r + h2*h2)*mass/12.0}" iyz="0.0"
+	  izz="${cyl_r*cyl_r*mass/2.0}"/>
+    </inertial>
+  </link>
+
+  <joint name="joint3" type="continuous">
+    <parent link="link2"/>
+    <child link="link3"/>
+    <origin xyz="0 ${2*cyl_r} ${h2 - 2*axle_offset}" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+
+  <transmission name="joint3_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="joint3_motor">
+      <mechanicalReduction>300</mechanicalReduction>
+    </actuator>
+    <joint name="joint3">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+  <link name="link3">
+    <collision>
+      <origin xyz="0 0 ${h3/2 - axle_offset}" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${cyl_r}" length="${h3}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 ${h3/2 - axle_offset}" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${cyl_r}" length="${h3}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 ${h3/2 - axle_offset}" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <inertia
+	  ixx="${(3*cyl_r*cyl_r + h3*h3)*mass/12.0}" ixy="0.0" ixz="0.0"
+	  iyy="${(3*cyl_r*cyl_r + h3*h3)*mass/12.0}" iyz="0.0"
+	  izz="${cyl_r*cyl_r*mass/2.0}"/>
+    </inertial>
+  </link>
+  
+  <joint name="joint4" type="continuous">
+    <parent link="link3"/>
+    <origin xyz="0 0 ${h3 - axle_offset}" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <child link="swab_link"/>
+  </joint>
+
+  <transmission name="joint4_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="joint4_motor">
+      <mechanicalReduction>300</mechanicalReduction>
+    </actuator>
+    <joint name="joint4">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+  <link name="swab_link">
+    <collision>
+      <origin xyz="0 0 ${swab_h/2}" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${swab_r}" length="${swab_h}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 ${swab_h/2}" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${swab_r}" length="${swab_h}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 ${swab_h/2}" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <inertia
+	  ixx="${(3*swab_r*swab_r + swab_h*swab_h)*mass/12.0}" ixy="0.0" ixz="0.0"
+	  iyy="${(3*swab_r*swab_r + swab_h*swab_h)*mass/12.0}" iyz="0.0"
+	  izz="${swab_r*swab_r*mass/2.0}"/>
+    </inertial>
+  </link>
+</robot>
