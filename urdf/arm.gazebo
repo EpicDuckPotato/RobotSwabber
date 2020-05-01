@@ -22,4 +22,8 @@
       <jointName>joint6</jointName>
     </plugin>
   </gazebo>
+
+  <gazebo reference="swab_link">
+    <gravity>0</gravity>
+  </gazebo>
 </robot>
