@@ -44,21 +44,25 @@
   <joint name="joint1" type="fixed">
     <parent link="body"/>
     <child link="nose"/>
-    <origin xyz="0 0 ${cyl_h + nose_r}" rpy="0 ${PI/2} 0"/>
+    <origin xyz="0 0 ${cyl_h + nose_r}" rpy="0 ${PI/3} 0"/>
   </joint>
 
   <link name="nose">
     <collision>
+      <origin xyz="0 0 ${nose_h/2}" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="model://hollow_tube/meshes/model.dae" scale="0.004 0.004 0.02"/>
+        <!--<mesh filename="model://hollow_tube/meshes/model.dae" scale="0.004 0.004 0.02"/>-->
+        <mesh filename="package://swab/meshes/cylinder.stl" scale="0.0016 0.0016 0.005"/>
         <!-- original outer diameter is 8.32 m -->
         <!-- original inner diameter is more than 3 m -->
       </geometry>
     </collision>
 
     <visual>
+      <origin xyz="0 0 ${nose_h/2}" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="model://hollow_tube/meshes/model.dae" scale="0.004 0.004 0.02"/>
+        <!--<mesh filename="model://hollow_tube/meshes/model.dae" scale="0.004 0.004 0.02"/>-->
+        <mesh filename="package://swab/meshes/cylinder.stl" scale="0.0016 0.0016 0.005"/>
         <!-- original outer diameter is 8.32 m -->
         <!-- original inner diameter is more than 3 m -->
       </geometry>
@@ -81,16 +85,20 @@
 
   <link name="test_tube">
     <collision>
+      <origin xyz="0 0 ${nose_h/2}" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="model://hollow_tube/meshes/model.dae" scale="0.004 0.004 0.02"/>
+        <!--<mesh filename="model://hollow_tube/meshes/model.dae" scale="0.004 0.004 0.02"/>-->
+        <mesh filename="package://swab/meshes/cylinder.stl" scale="0.0016 0.0016 0.005"/>
         <!-- original outer diameter is 8.32 m -->
         <!-- original inner diameter is more than 3 m -->
       </geometry>
     </collision>
 
     <visual>
+      <origin xyz="0 0 ${nose_h/2}" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="model://hollow_tube/meshes/model.dae" scale="0.004 0.004 0.02"/>
+        <!--<mesh filename="model://hollow_tube/meshes/model.dae" scale="0.004 0.004 0.02"/>-->
+        <mesh filename="package://swab/meshes/cylinder.stl" scale="0.0016 0.0016 0.005"/>
         <!-- original outer diameter is 8.32 m -->
         <!-- original inner diameter is more than 3 m -->
       </geometry>
