@@ -14,6 +14,7 @@ static const double l0 = 0.4447;
 static const double l1 = 0.2798;
 static const double l2 = 0.2798;
 static const double l3 = 0.4447;
+static const double joint6_offset = 0.0254;
 
 static const size_t steps_per_segment = 50;
 static const size_t num_waypoints = 8;
@@ -23,8 +24,8 @@ static const double dt = 0.1;
 
 void ik(array<double, num_angles> &angles, double x, double y, double theta, double phi) {
   // Decouple third link
-  double xp = x - cos(theta)*l3;
-  double yp = y - sin(theta)*l3 - l0;
+  double xp = x - cos(theta)*l3 + joint6_offset*sin(theta);
+  double yp = y - sin(theta)*l3 - l0 - joint6_offset*cos(theta);
 
   // Now we're just solving RR ik
   // Always pick elbow up I guess?
@@ -36,14 +37,18 @@ void ik(array<double, num_angles> &angles, double x, double y, double theta, dou
 }
 
 int main(int argc, char **argv) {
-  ros::init(argc, argv, "rrr_control");
+  ros::init(argc, argv, "arm_control");
   ros::NodeHandle n("~");
 
   ros::Publisher cmd_pubs[num_angles];
 
   // Initialize command publishers
   for (size_t i = 0; i < num_angles; i++) {
-    cmd_pubs[i] = n.advertise<std_msgs::Float64>("/rrr/joint" + to_string(i + 1) + "_position_controller/command", 10);
+    if (i < num_angles - 1) {
+      cmd_pubs[i] = n.advertise<std_msgs::Float64>("/arm/joint" + to_string(i + 2) + "_position_controller/command", 10);
+    } else {
+      cmd_pubs[i] = n.advertise<std_msgs::Float64>("/arm/joint" + to_string(i + 3) + "_position_controller/command", 10);
+    }
   }
 
   // x-y-theta-phi

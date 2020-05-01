@@ -2,11 +2,11 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <gazebo>
     <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-      <robotNamespace>/rrr</robotNamespace>
+      <robotNamespace>/arm</robotNamespace>
     </plugin>
   </gazebo>
 
-  <gazebo reference="joint4">
+  <gazebo reference="joint6">
     <disableFixedJointLumping>true</disableFixedJointLumping>
     <sensor name="ft_sensor" type="force_torque">
       <force_torque>
@@ -19,7 +19,7 @@
     <plugin name="ft_ros" filename="libgazebo_ros_ft_sensor.so">
       <updateRate>50.0</updateRate>
       <topicName>ft_sensor</topicName>
-      <jointName>joint4</jointName>
+      <jointName>joint6</jointName>
     </plugin>
   </gazebo>
 </robot>

@@ -186,10 +186,10 @@
       <pose frame=''>0.522179 -0.066918 0 0 -0 0</pose>
     </model>
     <state world_name='default'>
-      <sim_time>0 0</sim_time>
-      <real_time>0 0</real_time>
-      <wall_time>1588130834 329252098</wall_time>
-      <iterations>0</iterations>
+      <sim_time>59 995000000</sim_time>
+      <real_time>60 361991112</real_time>
+      <wall_time>1588306156 645612118</wall_time>
+      <iterations>59995</iterations>
       <model name='ground_plane'>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <scale>1 1 1</scale>
@@ -201,20 +201,20 @@
         </link>
       </model>
       <model name='hollow_tube'>
-        <pose frame=''>-0.65 0.0254 0.75 0 -1.57 0</pose>
+        <pose frame=''>0.65 0.0254 0.75 0 1.57 0</pose>
         <scale>1 1 1</scale>
         <link name='hollow_tube::chassis'>
-          <pose frame=''>-0.65 0.0254 0.75 0 -1.57 0</pose>
+          <pose frame=''>0.65 0.0254 0.75 0 1.57 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='hollow_tube_0'>
-        <pose frame=''>-0.5 0.0254 0 0 -0 0</pose>
+        <pose frame=''>0.5 0.0254 0 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='hollow_tube_0::chassis'>
-          <pose frame=''>-0.5 0.0254 0 0 -0 0</pose>
+          <pose frame=''>0.5 0.0254 0 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>

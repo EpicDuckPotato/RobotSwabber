@@ -18,8 +18,8 @@
     <arg name="physics" value="$(arg physics)"/>
   </include>
 
-  <arg name="rrr_model" default="$(find swab)/urdf/rrr.xacro" />
-  <param name="robot_description" command="rosrun xacro xacro $(arg rrr_model)" />
+  <arg name="arm_model" default="$(find swab)/urdf/arm.xacro" />
+  <param name="robot_description" command="rosrun xacro xacro $(arg arm_model)" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
   <node name="urdf_spawner1" pkg="gazebo_ros" type="spawn_model"
@@ -36,11 +36,13 @@
 
   <!-- load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen" ns="/rrr" args="joint1_position_controller joint2_position_controller joint3_position_controller joint4_position_controller joint_state_controller"/>
+    output="screen" ns="/arm" args="joint1_position_controller joint2_position_controller joint3_position_controller joint4_position_controller joint5_position_controller joint6_position_controller joint_state_controller"/>
 
   <!-- convert joint states to TF transforms for rviz, etc -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
     respawn="false" output="screen">
-    <remap from="/joint_states" to="/rrr/joint_states" />
+    <remap from="/joint_states" to="/arm/joint_states" />
   </node>
+
+  <node name="arm_control" pkg="swab" type="control_node"/>
 </launch>
