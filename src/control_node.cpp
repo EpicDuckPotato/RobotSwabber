@@ -10,11 +10,12 @@
 using namespace Eigen;
 using namespace std;
 
-static const double l0 = 0.4447;
-static const double l1 = 0.2798;
+static const double l0 = 0.4;
+static const double l1 = 0.0447;
 static const double l2 = 0.2798;
-static const double l3 = 0.4447;
-static const double joint6_offset = 0.0254;
+static const double l3 = 0.2798;
+static const double l4 = 0.4447; // combined length of link 4 and swab
+static const double joint6_offset = 0.0254; // link diameter
 
 static const size_t steps_per_segment = 50;
 static const size_t num_waypoints = 8;
@@ -24,14 +25,14 @@ static const double dt = 0.1;
 
 void ik(array<double, num_angles> &angles, double x, double y, double theta, double phi) {
   // Decouple third link
-  double xp = x - cos(theta)*l3 + joint6_offset*sin(theta);
-  double yp = y - sin(theta)*l3 - l0 - joint6_offset*cos(theta);
+  double xp = x - cos(theta)*l4 + joint6_offset*sin(theta);
+  double yp = y - sin(theta)*l4 - l0 - l1 - joint6_offset*cos(theta);
 
   // Now we're just solving RR ik
   // Always pick elbow up I guess?
   double sq_norm = xp*xp + yp*yp;
-  angles[1] = -acos((sq_norm - l1*l1 - l2*l2)/(2*l1*l2));
-  angles[0] = atan2(yp, xp) - asin(l2*sin(angles[1])/sqrt(sq_norm));
+  angles[1] = -acos((sq_norm - l2*l2 - l3*l3)/(2*l2*l3));
+  angles[0] = atan2(yp, xp) - asin(l3*sin(angles[1])/sqrt(sq_norm));
   angles[2] = theta - angles[1] - angles[0];
   angles[3] = phi;
 }
@@ -52,7 +53,7 @@ int main(int argc, char **argv) {
   }
 
   // x-y-theta-phi
-  double waypoints[num_waypoints + 1][4] = {{0, l0 + l1 + l2 + l3, M_PI/2, 0},
+  double waypoints[num_waypoints + 1][4] = {{-joint6_offset, l0 + l1 + l2 + l3 + l4, M_PI/2, 0},
                                             {0.60, 0.75, 0, 0},
                                             {0.75, 0.75, 0, 0},
                                             {0.75, 0.75, 0, M_PI},
@@ -60,7 +61,7 @@ int main(int argc, char **argv) {
                                             {0.5, 0.25, -M_PI/2, 0},
                                             {0.5, 0.1, -M_PI/2, 0},
                                             {0.5, 0.25, -M_PI/2, 0},
-                                            {0, l0 + l1 + l2 + l3, M_PI/2, 0}};
+                                            {-joint6_offset, l0 + l1 + l2 + l3 + l4, M_PI/2, 0}};
 
   array<array<double, num_angles>, trajectory_length> trajectory;
 
