@@ -41,6 +41,13 @@
     </inertial>
   </link>
 
+  <!--
+  <joint name="joint1" type="fixed">
+    <parent link="body"/>
+    <child link="nose"/>
+    <origin xyz="0 0 ${cyl_h + nose_r}" rpy="0 ${PI/2} ${PI/6}"/>
+  </joint>
+  -->
   <joint name="joint1" type="fixed">
     <parent link="body"/>
     <child link="nose"/>
@@ -51,20 +58,14 @@
     <collision>
       <origin xyz="0 0 ${nose_h/2}" rpy="0 0 0"/>
       <geometry>
-        <!--<mesh filename="model://hollow_tube/meshes/model.dae" scale="0.004 0.004 0.02"/>-->
         <mesh filename="package://swab/meshes/cylinder.stl" scale="0.0016 0.0016 0.005"/>
-        <!-- original outer diameter is 8.32 m -->
-        <!-- original inner diameter is more than 3 m -->
       </geometry>
     </collision>
 
     <visual>
       <origin xyz="0 0 ${nose_h/2}" rpy="0 0 0"/>
       <geometry>
-        <!--<mesh filename="model://hollow_tube/meshes/model.dae" scale="0.004 0.004 0.02"/>-->
         <mesh filename="package://swab/meshes/cylinder.stl" scale="0.0016 0.0016 0.005"/>
-        <!-- original outer diameter is 8.32 m -->
-        <!-- original inner diameter is more than 3 m -->
       </geometry>
     </visual>
 
@@ -76,6 +77,128 @@
 	  izz="${nose_r*nose_r*mass/2.0}"/>
     </inertial>
   </link>
+
+  <!--
+  <joint name="joint1" type="fixed">
+    <parent link="body"/>
+    <child link="nose_base"/>
+    <origin xyz="0 0 ${cyl_h}" rpy="0 0 ${PI/6}"/>
+  </joint>
+
+  <link name="nose_base">
+    <collision>
+      <origin xyz="0 0 0.005" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.1 0.01"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0.005" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.1 0.01"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${mass}"/>
+      <inertia
+	  ixx="100" ixy="0.0" ixz="0.0"
+	  iyy="100" iyz="0.0"
+	  izz="100"/>
+    </inertial>
+  </link>
+
+  <joint name="joint_top" type="fixed">
+    <parent link="nose_base"/>
+    <child link="nose_top"/>
+    <origin xyz="0 0 0.02" rpy="0 0 0"/>
+  </joint>
+
+  <link name="nose_top">
+    <collision>
+      <origin xyz="0 0 0.005" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.1 0.01"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0.005" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.1 0.01"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${mass}"/>
+      <inertia
+	  ixx="100" ixy="0.0" ixz="0.0"
+	  iyy="100" iyz="0.0"
+	  izz="100"/>
+    </inertial>
+  </link>
+
+  <joint name="joint_left" type="fixed">
+    <parent link="nose_base"/>
+    <child link="nose_left"/>
+    <origin xyz="0 -0.025 0.005" rpy="0 0 0"/>
+  </joint>
+
+  <link name="nose_left">
+    <collision>
+      <origin xyz="0 0 0.005" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.01 0.02"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0.005" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.01 0.02"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${mass}"/>
+      <inertia
+	  ixx="100" ixy="0.0" ixz="0.0"
+	  iyy="100" iyz="0.0"
+	  izz="100"/>
+    </inertial>
+  </link>
+
+  <joint name="joint_right" type="fixed">
+    <parent link="nose_base"/>
+    <child link="nose_right"/>
+    <origin xyz="0 0.025 0.005" rpy="0 0 0"/>
+  </joint>
+
+  <link name="nose_right">
+    <collision>
+      <origin xyz="0 0 0.005" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.01 0.02"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0.005" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.01 0.02"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${mass}"/>
+      <inertia
+	  ixx="100" ixy="0.0" ixz="0.0"
+	  iyy="100" iyz="0.0"
+	  izz="100"/>
+    </inertial>
+  </link>
+  -->
 
   <joint name="joint2" type="fixed">
     <parent link="body"/>

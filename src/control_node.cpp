@@ -35,9 +35,9 @@ static const double l4 = 0.4447; // combined length of link 4 and swab
 static const double diameter = 0.0254; // link diameter
 
 // Admittance parameters
-static const Pose m = {1, 1, 1, 100, 100, 0};
-static const Pose b = {1, 1, 1, 100, 100, 0};
-static const Pose k = {1, 1, 1, 100, 100, 0};
+static const Pose m = {20, 1, 20, 0.25, 5, 0};
+static const Pose b = {100, 1, 100, 3, 8, 0};
+static const Pose k = {100, 1, 100, 0.25, 5, 0};
 
 static const size_t joint_num = 6;
 static const size_t steps_per_segment = 50;
@@ -66,6 +66,7 @@ Matrix3d rotX(double angle) {
   rot << 1, 0, 0,
          0, c, -s,
          0, s, c;
+  return rot;
 }
 
 Matrix3d rotY(double angle) {
@@ -76,6 +77,7 @@ Matrix3d rotY(double angle) {
   rot << c, 0, s,
          0, 1, 0,
          -s, 0, c;
+  return rot;
 }
 
 Matrix3d rotZ(double angle) {
@@ -86,6 +88,7 @@ Matrix3d rotZ(double angle) {
   rot << c, -s, 0,
          s, c, 0,
          0, 0, 1;
+  return rot;
 }
 
 // Forward kinematics for orientation of force sensor
@@ -95,9 +98,9 @@ Matrix3d fk(const Configuration &config) {
 
 void handle_wrench(geometry_msgs::WrenchStamped msg) {
   first_sensor = true;
-  fx = max(msg.wrench.force.z - 1, 0.0);
-  fy = max(msg.wrench.force.y - 1, 0.0);
-  fz = max(-msg.wrench.force.x - 1, 0.0);
+  fx = msg.wrench.force.z;
+  fy = msg.wrench.force.y;
+  fz = -msg.wrench.force.x;
   ty = msg.wrench.torque.y;
   tz = -msg.wrench.torque.x;
 }
@@ -117,7 +120,8 @@ void handle_joints(sensor_msgs::JointState msg) {
 
 void ik(Configuration &config, const Pose &pose) {
   // y position is controlled directly by prismatic joint 1
-  config.d1 = pose.y - diameter - l4*sin(pose.psi);
+  //config.d1 = pose.y - diameter - l4*sin(pose.psi);
+  config.d1 = pose.y - diameter;
 
   // Decouple effective link4
   double xp = pose.x - cos(pose.theta)*l4*cos(pose.psi) + diameter*sin(pose.theta);
@@ -170,7 +174,7 @@ int main(int argc, char **argv) {
 
   // Desired poses and velocities, post-compliance
   Pose vel_des;
-  Pose pos_des;
+  Pose pose_des;
 
   // Generate trajectory using linear workspace interpolation between waypoints
   for (size_t i = 0; i < num_waypoints; i++) {
@@ -208,34 +212,40 @@ int main(int argc, char **argv) {
   ros::Rate r(10); 
   for (size_t i = 0; ros::ok() && i < trajectory_length; i++) {
 
-    if (!first_sensor || !first_joints) {
-      pos_des = trajectory[i];
+    if (!first_sensor || !first_joints || i < steps_per_segment) {
+      pose_des = trajectory[i];
       vel_des = vel_trajectory[i];
     } else {
       // Run compliance
       Vector3d force(fx, fy, fz);
       force = orientation*force;
 
-      vel_des.x += dt*((force(0) - k.x*(pos_des.x - trajectory[i - 1].x) - b.x*(vel_des.x - vel_trajectory[i - 1].x))/m.x - acc_trajectory[i - 1].x); 
-      pos_des.x += vel_des.x*dt;
+      vel_des.x += dt*((force(0) - k.x*(pose_des.x - trajectory[i - 1].x) - b.x*(vel_des.x - vel_trajectory[i - 1].x))/m.x + acc_trajectory[i - 1].x); 
+      pose_des.x += vel_des.x*dt;
 
-      vel_des.y += dt*((force(1) - k.y*(pos_des.y - trajectory[i - 1].y) - b.y*(vel_des.y - vel_trajectory[i - 1].y))/m.y - acc_trajectory[i - 1].y);
-      pos_des.y += vel_des.y*dt;
+      /*
+      vel_des.y += dt*((force(1) - k.y*(pose_des.y - trajectory[i - 1].y) - b.y*(vel_des.y - vel_trajectory[i - 1].y))/m.y + acc_trajectory[i - 1].y);
+      pose_des.y += vel_des.y*dt;
 
-      vel_des.z += dt*((force(2) - k.z*(pos_des.z - trajectory[i - 1].z) - b.z*(vel_des.z - vel_trajectory[i - 1].z))/m.z - acc_trajectory[i - 1].z);
-      pos_des.z += vel_des.z*dt;
+      vel_des.z += dt*((force(2) - k.z*(pose_des.z - trajectory[i - 1].z) - b.z*(vel_des.z - vel_trajectory[i - 1].z))/m.z + acc_trajectory[i - 1].z);
+      pose_des.z += vel_des.z*dt;
+      */
 
-      vel_des.theta += dt*((ty - k.theta*(pos_des.theta - trajectory[i - 1].theta) - b.theta*(vel_des.theta - vel_trajectory[i - 1].theta))/m.theta - acc_trajectory[i - 1].theta);
-      pos_des.theta += vel_des.theta*dt;
+      vel_des.theta += dt*((ty - k.theta*(pose_des.theta - trajectory[i - 1].theta) - b.theta*(vel_des.theta - vel_trajectory[i - 1].theta))/m.theta + acc_trajectory[i - 1].theta);
+      pose_des.theta += vel_des.theta*dt;
+     
+      //pose_des.x = trajectory[i].x;
+      pose_des.y = trajectory[i].y;
+      pose_des.z = trajectory[i].z;
+      //pose_des.theta = trajectory[i].theta;
+      //pose_des.psi = trajectory[i].psi;
 
-      vel_des.psi += dt*((tz - k.psi*(pos_des.psi - trajectory[i - 1].psi) - b.psi*(vel_des.psi - vel_trajectory[i - 1].psi))/m.psi - acc_trajectory[i - 1].psi);
-      pos_des.psi += vel_des.psi*dt;
-
-      cout << vel_des.theta << endl;
+      vel_des.psi += dt*((tz - k.psi*(pose_des.psi - trajectory[i - 1].psi) - b.psi*(vel_des.psi - vel_trajectory[i - 1].psi))/m.psi + acc_trajectory[i - 1].psi);
+      pose_des.psi += vel_des.psi*dt;
     }
 
     Configuration config;
-    ik(config, pos_des);
+    ik(config, pose_des);
 
     msg.data = config.d1;
     cmd_pubs[0].publish(msg);
